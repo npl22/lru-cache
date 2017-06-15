@@ -34,12 +34,10 @@ class LinkedList
   def initialize
     @head = Node.new(:head)
     @tail = Node.new(:tail)
-
-    @head.prev = nil
     @head.next = @tail
-
-    @tail.next = nil
     @tail.prev = @head
+    # nil on default @head.prev = nil
+    # nil on default @tail.next = nil
   end
 
   def [](i)
@@ -61,31 +59,52 @@ class LinkedList
   end
 
   def get(key)
+    each do |node|
+      return node.val if key == node.key
+    end
+    nil
   end
 
   def include?(key)
+    any? { |node| node.key == key }
   end
 
   # Append to head of list, if empty, @tail = first = @head.prev
   def append(key, val)
     new_node = Node.new(key, val)
+
     # Connect new_node to last element
-    new_node.prev = first
-    first.next = new_node
+    new_node.prev = last
+    last.next = new_node
     # Connect new_node to tail (self.last = @tail.next)
     new_node.next = @tail
     @tail.prev = new_node
+
+    new_node
   end
 
   def update(key, val)
+    each do |node|
+      if node.key == key
+        node.val = val
+        break
+      end
+    end
   end
 
   def remove(key)
+    each do |node|
+      if key == node.key
+        node.remove
+        return node.key
+        break
+      end
+    end
   end
 
   def each
-    current_node = last
-    until current_node == first
+    current_node = first
+    until current_node == @tail
       yield(current_node)
       current_node = current_node.next
     end
@@ -101,8 +120,9 @@ end
 # load 'lib/p04_linked_list.rb'
 if __FILE__ == $PROGRAM_NAME
   list = LinkedList.new
-  list.append(1, 1)
-  list.append(2, 2)
-  list.append(3, 3)
-  binding.pry
+  list.append(:first, 1)
+  list.append(:second, 2)
+  list.append(:third, 3)
+  list.update(:second, '2nd')
+  list.each { |node| puts node.key }
 end
