@@ -15,6 +15,7 @@ class LRUCache
   end
 
   def get(key)
+    @map.bucket.get(key)
   end
 
   def to_s
@@ -25,12 +26,27 @@ class LRUCache
 
   def calc!(key)
     # suggested helper method; insert an (un-cached) key
+    if map[key]
+      update_node!(node)
+    else
+      insert(key)
+    end
+  end
+
+  def insert(key)
+    @store.append(key)
+    eject!
   end
 
   def update_node!(node)
     # suggested helper method; move a node to the end of the list
+
+
+    @store.remove(node.key)
+    @store.append(node.key, node.val)
   end
 
   def eject!
+    @store.remove(first.key)
   end
 end

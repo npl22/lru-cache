@@ -95,7 +95,6 @@ class ResizingIntSet
     @store.length
   end
 
-  # Key: use flatten to get all the numbers
   def resize!
     old_store = @store
     @store = Array.new(num_buckets * 2) { [] }

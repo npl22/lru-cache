@@ -50,7 +50,7 @@ class HashMap
   alias_method :[], :get
   alias_method :[]=, :set
 
-  # private
+  private
 
   def num_buckets
     @store.length
