@@ -1,8 +1,10 @@
 require_relative 'p05_hash_map'
 require_relative 'p04_linked_list'
+require 'pry-byebug'
 
 class LRUCache
   attr_reader :count
+  attr_reader :map, :store, :max, :prc
   def initialize(max, prc)
     @map = HashMap.new
     @store = LinkedList.new
@@ -15,7 +17,12 @@ class LRUCache
   end
 
   def get(key)
-    @map.bucket.get(key)
+    if @map[key]
+      link = @map[key]
+      update_link!(link)
+    else
+      calc!(key)
+    end
   end
 
   def to_s
@@ -25,28 +32,27 @@ class LRUCache
   private
 
   def calc!(key)
-    # suggested helper method; insert an (un-cached) key
-    if map[key]
-      update_node!(node)
-    else
-      insert(key)
-    end
+    eject! if count == @max
+
+    # Add new item to Linked List
+    val = @prc.call(key)
+    @store.append(key, val)
+
+    # Add key to HashMap with the value being the node just appended
+    @map.set(key, @store.last)
+
+    # Return value of new item in cache
+    @map[key].val
   end
 
-  def insert(key)
-    @store.append(key)
-    eject!
-  end
-
-  def update_node!(node)
-    # suggested helper method; move a node to the end of the list
-
-
-    @store.remove(node.key)
-    @store.append(node.key, node.val)
+  def update_link!(link)
+    @store.remove(link.key)
+    @store.append(link.key, link.val)
+    link.val
   end
 
   def eject!
-    @store.remove(first.key)
+    @map.delete(@store.first.key)
+    @store.remove(@store.first.key)
   end
 end

@@ -31,8 +31,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  byebug
-  pry
   pry-byebug
   rspec (~> 3.4.0)
 

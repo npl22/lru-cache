@@ -9,7 +9,6 @@ class HashSet
   end
 
   def insert(key)
-    p @store
     resize! if @count == num_buckets
     @count += 1
     self[key] << key unless include?(key)
